@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 
 #define MAX(a,b) ((a) > (b) ? a : b)
 #define MIN(a,b) ((a) < (b) ? a : b)
@@ -25,8 +26,8 @@ const char* LOG_DIR = "/var/log/httpd";
 // [0][0-99]  * 10ms  [0-1s)
 // [1][10-99] * 100ms [1-10s)
 // [2][10-99] * 1000ms[10-99s)
-unsigned int g_record_count[3][100] = {0};
-unsigned int g_total_count = 0;
+unsigned int64_t g_record_count[3][100] = {0};
+unsigned int64_t g_total_count = 0;
 
 int main(int argc, const char * argv[]) {
     
@@ -41,7 +42,7 @@ int main(int argc, const char * argv[]) {
     // step 1. load all data from log files
     // time-complexity : O(n)
     // space-complexity : O(1)
-    int invalid_log_lines = 0;
+    int64_t invalid_log_lines = 0;
     while ((ptr=readdir(dir)) != NULL) {
         if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0) {
             continue;
@@ -100,15 +101,15 @@ int main(int argc, const char * argv[]) {
     // step 2. calc percentage
     // time-complexity : O(1)
     // space-complexity : O(1)
-    int percent90 = g_total_count * 0.9;
-    int percent95 = g_total_count * 0.95;
-    int percent99 = g_total_count * 0.99;
+    int64_t percent90 = g_total_count * 0.9;
+    int64_t percent95 = g_total_count * 0.95;
+    int64_t percent99 = g_total_count * 0.99;
     
     int time90 = 0;
     int time95 = 0;
     int time99 = 0;
 
-    int count = 0;
+    int64_t count = 0;
     bool finished = false;
     for (int series = 0; series < 3; series ++) {
         for (int index = (series == 0 ? 0 : 10); index < 100; index ++) {
