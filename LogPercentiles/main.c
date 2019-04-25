@@ -65,7 +65,7 @@ int main(int argc, const char * argv[]) {
                         int time_span = 0;
                         //10.2.3.4 [2018/13/10:14:02:39] "GET /api/playeritems?playerId=3" 200 1230
                         int items = sscanf(line, "%s %s \"GET %s %d %d", ip, timestamp, url, &ret_code, &time_span);
-                        if (items == 5) {
+                        if (items == 5 && time_span >= 0) {
                             //printf("%d\n", time_span);
                             g_total_count ++;
                             if (time_span < 1000) {
