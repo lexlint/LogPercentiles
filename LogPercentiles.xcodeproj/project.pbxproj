@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C887FFB62264D99D007ADE08 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C887FFB52264D99D007ADE08 /* main.c */; };
-		C887FFC32264D9E3007ADE08 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C887FFC22264D9E3007ADE08 /* main.c */; };
+		C86951102279CF5300D50137 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C869510F2279CF5300D50137 /* main.c */; };
+		C86951162279D53300D50137 /* LogPercentiles.c in Sources */ = {isa = PBXBuildFile; fileRef = C887FFB52264D99D007ADE08 /* LogPercentiles.c */; };
+		C869511D2279D54900D50137 /* test_main.c in Sources */ = {isa = PBXBuildFile; fileRef = C86951112279CFF400D50137 /* test_main.c */; };
+		C86951212279E4D200D50137 /* test_common.c in Sources */ = {isa = PBXBuildFile; fileRef = C869511F2279E32F00D50137 /* test_common.c */; };
+		C887FFB62264D99D007ADE08 /* LogPercentiles.c in Sources */ = {isa = PBXBuildFile; fileRef = C887FFB52264D99D007ADE08 /* LogPercentiles.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		C887FFB02264D99D007ADE08 /* CopyFiles */ = {
+		C86951182279D53300D50137 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -21,7 +24,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		C887FFBE2264D9E3007ADE08 /* CopyFiles */ = {
+		C887FFB02264D99D007ADE08 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -33,21 +36,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C869510E2279CF3D00D50137 /* LogPercentiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogPercentiles.h; sourceTree = "<group>"; };
+		C869510F2279CF5300D50137 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		C86951112279CFF400D50137 /* test_main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = test_main.c; sourceTree = "<group>"; };
+		C869511C2279D53300D50137 /* TestLogPercentiles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestLogPercentiles; sourceTree = BUILT_PRODUCTS_DIR; };
+		C869511E2279E32F00D50137 /* test_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = test_common.h; sourceTree = "<group>"; };
+		C869511F2279E32F00D50137 /* test_common.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = test_common.c; sourceTree = "<group>"; };
 		C887FFB22264D99D007ADE08 /* LogPercentiles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LogPercentiles; sourceTree = BUILT_PRODUCTS_DIR; };
-		C887FFB52264D99D007ADE08 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		C887FFC02264D9E3007ADE08 /* GenerateLog */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GenerateLog; sourceTree = BUILT_PRODUCTS_DIR; };
-		C887FFC22264D9E3007ADE08 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		C887FFB52264D99D007ADE08 /* LogPercentiles.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LogPercentiles.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C887FFAF2264D99D007ADE08 /* Frameworks */ = {
+		C86951172279D53300D50137 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C887FFBD2264D9E3007ADE08 /* Frameworks */ = {
+		C887FFAF2264D99D007ADE08 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -61,7 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				C887FFB42264D99D007ADE08 /* LogPercentiles */,
-				C887FFC12264D9E3007ADE08 /* GenerateLog */,
 				C887FFB32264D99D007ADE08 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -70,7 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				C887FFB22264D99D007ADE08 /* LogPercentiles */,
-				C887FFC02264D9E3007ADE08 /* GenerateLog */,
+				C869511C2279D53300D50137 /* TestLogPercentiles */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -78,22 +84,36 @@
 		C887FFB42264D99D007ADE08 /* LogPercentiles */ = {
 			isa = PBXGroup;
 			children = (
-				C887FFB52264D99D007ADE08 /* main.c */,
+				C887FFB52264D99D007ADE08 /* LogPercentiles.c */,
+				C869510E2279CF3D00D50137 /* LogPercentiles.h */,
+				C869510F2279CF5300D50137 /* main.c */,
+				C86951112279CFF400D50137 /* test_main.c */,
+				C869511E2279E32F00D50137 /* test_common.h */,
+				C869511F2279E32F00D50137 /* test_common.c */,
 			);
 			path = LogPercentiles;
-			sourceTree = "<group>";
-		};
-		C887FFC12264D9E3007ADE08 /* GenerateLog */ = {
-			isa = PBXGroup;
-			children = (
-				C887FFC22264D9E3007ADE08 /* main.c */,
-			);
-			path = GenerateLog;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C86951132279D53300D50137 /* TestLogPercentiles */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C86951192279D53300D50137 /* Build configuration list for PBXNativeTarget "TestLogPercentiles" */;
+			buildPhases = (
+				C86951142279D53300D50137 /* Sources */,
+				C86951172279D53300D50137 /* Frameworks */,
+				C86951182279D53300D50137 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestLogPercentiles;
+			productName = LogPercentiles;
+			productReference = C869511C2279D53300D50137 /* TestLogPercentiles */;
+			productType = "com.apple.product-type.tool";
+		};
 		C887FFB12264D99D007ADE08 /* LogPercentiles */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C887FFB92264D99D007ADE08 /* Build configuration list for PBXNativeTarget "LogPercentiles" */;
@@ -111,23 +131,6 @@
 			productReference = C887FFB22264D99D007ADE08 /* LogPercentiles */;
 			productType = "com.apple.product-type.tool";
 		};
-		C887FFBF2264D9E3007ADE08 /* GenerateLog */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C887FFC42264D9E3007ADE08 /* Build configuration list for PBXNativeTarget "GenerateLog" */;
-			buildPhases = (
-				C887FFBC2264D9E3007ADE08 /* Sources */,
-				C887FFBD2264D9E3007ADE08 /* Frameworks */,
-				C887FFBE2264D9E3007ADE08 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = GenerateLog;
-			productName = GenerateLog;
-			productReference = C887FFC02264D9E3007ADE08 /* GenerateLog */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -138,9 +141,6 @@
 				ORGANIZATIONNAME = com.lexlin;
 				TargetAttributes = {
 					C887FFB12264D99D007ADE08 = {
-						CreatedOnToolsVersion = 10.2;
-					};
-					C887FFBF2264D9E3007ADE08 = {
 						CreatedOnToolsVersion = 10.2;
 					};
 				};
@@ -158,31 +158,52 @@
 			projectRoot = "";
 			targets = (
 				C887FFB12264D99D007ADE08 /* LogPercentiles */,
-				C887FFBF2264D9E3007ADE08 /* GenerateLog */,
+				C86951132279D53300D50137 /* TestLogPercentiles */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C86951142279D53300D50137 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C86951212279E4D200D50137 /* test_common.c in Sources */,
+				C869511D2279D54900D50137 /* test_main.c in Sources */,
+				C86951162279D53300D50137 /* LogPercentiles.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C887FFAE2264D99D007ADE08 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C887FFB62264D99D007ADE08 /* main.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C887FFBC2264D9E3007ADE08 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C887FFC32264D9E3007ADE08 /* main.c in Sources */,
+				C86951102279CF5300D50137 /* main.c in Sources */,
+				C887FFB62264D99D007ADE08 /* LogPercentiles.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		C869511A2279D53300D50137 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9FX5S2DFK8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		C869511B2279D53300D50137 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9FX5S2DFK8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		C887FFB72264D99D007ADE08 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -312,29 +333,18 @@
 			};
 			name = Release;
 		};
-		C887FFC52264D9E3007ADE08 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9FX5S2DFK8;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		C887FFC62264D9E3007ADE08 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9FX5S2DFK8;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C86951192279D53300D50137 /* Build configuration list for PBXNativeTarget "TestLogPercentiles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C869511A2279D53300D50137 /* Debug */,
+				C869511B2279D53300D50137 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C887FFAD2264D99D007ADE08 /* Build configuration list for PBXProject "LogPercentiles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -349,15 +359,6 @@
 			buildConfigurations = (
 				C887FFBA2264D99D007ADE08 /* Debug */,
 				C887FFBB2264D99D007ADE08 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C887FFC42264D9E3007ADE08 /* Build configuration list for PBXNativeTarget "GenerateLog" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C887FFC52264D9E3007ADE08 /* Debug */,
-				C887FFC62264D9E3007ADE08 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

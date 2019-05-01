@@ -1,0 +1,38 @@
+test_invalid_log_format_case
+invalid log line!
+10.2.3.4 [2019/02/03:23:59:09] "GET /api/playeritems?playerId=3" 200
+invalid log line!
+10.2.3.4 [2019/02/03:23:59:09] "GET /api/playeritems?playerId=3" 1417
+invalid log line!
+10.2.3.4 "GET /api/playeritems?playerId=3" 200 1417
+invalid log line!
+10.2.3.4 /api/playeritems?playerId=3" 200 1417
+invalid log line!
+[2019/02/03:23:59:09] "GET /api/playeritems?playerId=3" 200 1417
+invalid log line!
+aaabcwjaxocpqmdcbzicqnc
+invalid log line!
+   
+Load log failed! errcode:-4
+test_case days(1), records_per_day(100)
+90% of requests return a response in 1400 ms
+95% of requests return a response in 2400 ms
+99% of requests return a response in 3500 ms
+performance:
+time_load_file:238 microseconds, time_calc_percentage:8 microseconds
+
+test_case days(10), records_per_day(100)
+90% of requests return a response in 1600 ms
+95% of requests return a response in 2700 ms
+99% of requests return a response in 3700 ms
+performance:
+time_load_file:980 microseconds, time_calc_percentage:2 microseconds
+
+test_case days(100), records_per_day(10000)
+90% of requests return a response in 1500 ms
+95% of requests return a response in 2400 ms
+99% of requests return a response in 3600 ms
+performance:
+time_load_file:448609 microseconds, time_calc_percentage:3 microseconds
+
+Program ended with exit code: 0
