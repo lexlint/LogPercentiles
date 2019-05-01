@@ -14,8 +14,8 @@ enum ERR_LOAD_LOG{
     ERR_LL_SUCCESS          = 0,    // no error
     ERR_LL_INVALID_PARAM    = -1,   // one or more params are invalid
     ERR_LL_OPEN_DIR_FAILED  = -2,   // open dir failed, see log for the detail errno
-    ERR_LL_NO_LOG_FILE      = -3,   // there is no log files in the param dir
-    ERR_LL_NO_LOG_RECORD    = -4,   // there are some log file, but no log record is found is the log file
+    ERR_LL_NO_LOG_FILE      = -3,   // there is no log files in the dir param
+    ERR_LL_NO_LOG_RECORD    = -4,   // there are some log files, but no log record is found in the log files
 };
 
 /**
@@ -24,12 +24,12 @@ enum ERR_LOAD_LOG{
  * space-complexity : O(1)
  * @param log_dir       log dir
  * @param total_count   total log record count
- * @param record_count  is used to save the count of records in different time periods
+ * @param record_count  is used to save the record counts in different time periods
  *          The size is fixed at [3][100], corresponding to 0ms - 100s.
  *          Store the longer time counts by lower accuracy for better performance and lower storage cost,
  *          because of the longer time used, the lower accuracy we care about
  *          ATTENTION:
- *          For simplicity of calculation, not all element in the array are used!
+ *          For simplicity of calculation, not all elements in the array are used!
  *          [0][0-99]  * 10ms  [0-1s)
  *          [1][10-99] * 100ms [1-10s)
  *          [2][10-99] * 1000ms[10-99s)

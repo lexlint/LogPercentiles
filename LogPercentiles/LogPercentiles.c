@@ -62,7 +62,7 @@ int load_log(const char* log_dir, uint64_t* total_count, uint64_t record_count[3
                         char url[MAX_API_LENGTH] = {0};
                         int ret_code = 0;
                         int time_span = 0;
-                        //currect log line looks like this:
+                        //currect log line format:
                         //10.2.3.4 [2018/13/10:14:02:39] "GET /api/playeritems?playerId=3" 200 1230
                         char line_buf[1024] = {0};
                         strncpy(line_buf, line, len);
@@ -122,18 +122,17 @@ void calc_percentage_time(uint64_t record_count[3][100], int64_t percent_counts[
     memset(times, 0, sizeof(int) * num);
     
     int64_t count = 0;
-    // because the 3 series of record_count saved by diffrent time accuracy
-    // so the calculation process is a bit complicated
+    // Using complicated algo with 3 series of record_count per different time accurancy for storage saving
     // [0][0-99]  * 10ms  [0-1s)
     // [1][10-99] * 100ms [1-10s)
     // [2][10-99] * 1000ms[10-99s)
     for (int series = 0; series < 3; series ++) {
-        // the first set is uesed from 0 index
-        // the others are used from 10 index
+        // the first set starts from index 0
+        // the others start from index 10
         for (int index = (series == 0 ? 0 : 10); index < 100; index ++) {
             // accumulate record count
             count += record_count[series][index];
-            // check if the percent count is reached
+            // check if the percentage count is reached
             for (int index_percent = 0; index_percent < num; index_percent ++) {
                 if (times[index_percent] == 0 && count > percent_counts[index_percent]) {
                     times[index_percent] = index * pow(10, series + 1);
