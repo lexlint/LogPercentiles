@@ -21,6 +21,7 @@ const int SECONDS_ONE_DAY = 60 * 60 * 24;
 const char* LOG_DIR = "/var/log/httpd";
 
 const char* INVALID_LOG_CONTENT[] = {
+    "10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200 10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200 10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200 10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200 10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200 10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200",
     "10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 200\n",
     "10.2.3.4 [2019/02/03:23:59:09] \"GET /api/playeritems?playerId=3\" 1417\n",
     "10.2.3.4 \"GET /api/playeritems?playerId=3\" 200 1417\n",
@@ -35,7 +36,7 @@ int clear_log_dir(const char* log_dir){
     DIR *dir;
     if ((dir=opendir(log_dir)) == NULL) {
         printf("open log dir error![err:%d]", errno);
-        return -1;
+        return ERR_OPEN_DIR_FAILED;
     }
     
     struct dirent *ptr;
@@ -62,7 +63,7 @@ int create_log_dir_if_not_exist(const char* log_dir){
         int ret = mkdir(log_dir, S_IRWXU | S_IRWXG | S_IRWXO);
         if (ret != 0) {
             printf("create log dir failed!");
-            return -1;
+            return ERR_CREATE_DIR_FAILED;
         }
     }
     return 0;
@@ -92,6 +93,8 @@ void generate_log(const char* log_dir, int days, int records_per_day){
             struct tm * tm_record = localtime(&time_record);
             
             char log_content[128] = {0};
+            
+            // Assume that the time distribution conforms to the exponential distribution
             sprintf(log_content,
                     "10.2.3.4 [%04d/%02d/%02d:%02d:%02d:%02d] \"GET /api/playeritems?playerId=3\" 200 %d\n",
                     1900 + tm_record->tm_year, tm_record->tm_mday, tm_record->tm_mon + 1,
@@ -144,27 +147,67 @@ int test_normal_case(int days, int records_per_day){
      time_load_file,
      {
          ret = load_log(LOG_DIR, &total_count, record_count);
-         if (ret != ERR_LL_SUCCESS) {
+         if (ret != ERR_SUCCESS) {
              printf("Load log failed! errcode:%d\n", ret);
              return ret;
          }
      }
      );
     
-    int64_t percent_counts[3] = {total_count * 0.9, total_count * 0.95, total_count * 0.99};
+    float percents[3] = {0.9, 0.95, 0.99};
     int times[3] = {0};
     
     GET_TIME
     (
      time_calc_percentage,
      {
-         calc_percentage_time(record_count, percent_counts, times, 3);
+         calc_time(total_count, record_count, percents, times, 3);
      }
      );
     
-    output_report(times);
+    output_report(percents, times, 3);
     printf("performance:\ntime_load_file:%lld microseconds, time_calc_percentage:%lld microseconds\n\n",
            time_load_file, time_calc_percentage);
+    
+    return 0;
+}
+
+int test_calc_percentage_time(){
+    printf("test_calc_percentage_time\n");
+    int ret = clear_log_dir(LOG_DIR);
+    if (ret != 0) {
+        printf("clear_log_dir failed!\n");
+        return ret;
+    }
+    ret = create_log_dir_if_not_exist(LOG_DIR);
+    if (ret != 0) {
+        printf("create_log_dir failed!\n");
+        return ret;
+    }
+    
+    generate_log(LOG_DIR, 3, 100);
+    
+    int64_t time_calc_percentage = 0;
+    
+    // test custom percentage num & random order
+    float percents[5] = {0.90, 0.92, 0.95, 0.99, 0.97};
+    int times[5] = {0};
+    
+    GET_TIME
+    (
+     time_calc_percentage,
+     {
+         int ret = calc_percentage_time(LOG_DIR, percents, times, 5);
+         if (ret != 0) {
+             printf("calc_percentage_time failed! [%d]", ret);
+             return ret;
+         }
+     }
+     );
+    
+    output_report(percents, times, 5);
+    printf("performance:\ntime_calc_percentage:%lld microseconds\n\n",
+           time_calc_percentage);
     
     return 0;
 }
@@ -184,38 +227,14 @@ int test_invalid_log_format_case(){
     
     generate_invalid_log(LOG_DIR);
     
-    int64_t time_load_file = 0;
-    int64_t time_calc_percentage = 0;
-    
     uint64_t record_count[3][100] = {0};
     uint64_t total_count = 0;
     
-    GET_TIME
-    (
-     time_load_file,
-     {
-         ret = load_log(LOG_DIR, &total_count, record_count);
-         if (ret != ERR_LL_SUCCESS) {
-             printf("Load log failed! errcode:%d\n", ret);
-             return ret;
-         }
-     }
-     );
-    
-    int64_t percent_counts[3] = {total_count * 0.9, total_count * 0.95, total_count * 0.99};
-    int times[3] = {0};
-    
-    GET_TIME
-    (
-     time_calc_percentage,
-     {
-         calc_percentage_time(record_count, percent_counts, times, 3);
-     }
-     );
-    
-    output_report(times);
-    printf("performance:\ntime_load_file:%lld microseconds, time_calc_percentage:%lld microseconds\n\n",
-           time_load_file, time_calc_percentage);
+    ret = load_log(LOG_DIR, &total_count, record_count);
+    if (ret != ERR_SUCCESS) {
+        printf("Load log failed! errcode:%d\n", ret);
+        return ret;
+    }
     
     return 0;
 }
@@ -225,6 +244,7 @@ void run_all_case(){
     test_normal_case(1, 100);
     test_normal_case(10, 100);
     test_normal_case(100, 10000);
+    test_calc_percentage_time();
 }
 
 int main(int argc, const char * argv[]) {

@@ -10,6 +10,7 @@
 // space-complexity : O(1)
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <dirent.h>
 #include <stdbool.h>
 #include <string.h>
@@ -24,19 +25,20 @@ const uint MAX_FILE_NAME_LENGTH = 64;
 const uint MAX_IPV4_LENGTH = 16;
 const uint MAX_TIMESTEMP_LENGTH = 32;
 const uint MAX_API_LENGTH = 128;
+const uint MAX_LOG_LINE_LENGTH = 256;
 const uint ITEMS_PER_LOG_LINE = 5;
 
 int load_log(const char* log_dir, uint64_t* total_count, uint64_t record_count[3][100]){
     // check param
     if (log_dir == NULL || total_count == NULL || record_count == NULL) {
         printf("invalid param!");
-        return ERR_LL_INVALID_PARAM;
+        return ERR_INVALID_PARAM;
     }
     
     DIR *dir;
     if ((dir=opendir(log_dir)) == NULL) {
         printf("open log dir error![err:%d]", errno);
-        return ERR_LL_OPEN_DIR_FAILED;
+        return ERR_OPEN_DIR_FAILED;
     }
     
     int log_files = 0;  //log file counting
@@ -57,6 +59,17 @@ int load_log(const char* log_dir, uint64_t* total_count, uint64_t record_count[3
                 do {
                     line = fgetln(fp, &len);
                     if (line) {
+                        // line string is not truncated, so copy it
+                        char line_buf[MAX_LOG_LINE_LENGTH + 1] = {0};
+                        strncpy(line_buf, line, MIN(len, MAX_LOG_LINE_LENGTH));
+                        
+                        // Discards lines of more than specified max length
+                        if (len > MAX_LOG_LINE_LENGTH) {
+                            invalid_log_lines ++;
+                            printf("invalid log line!\n%s", line_buf);
+                            continue;
+                        }
+                        
                         char ip[MAX_IPV4_LENGTH] = {0};
                         char timestamp[MAX_TIMESTEMP_LENGTH] = {0};
                         char url[MAX_API_LENGTH] = {0};
@@ -64,8 +77,6 @@ int load_log(const char* log_dir, uint64_t* total_count, uint64_t record_count[3
                         int time_span = 0;
                         //currect log line format:
                         //10.2.3.4 [2018/13/10:14:02:39] "GET /api/playeritems?playerId=3" 200 1230
-                        char line_buf[1024] = {0};
-                        strncpy(line_buf, line, len);
                         int items = sscanf(line_buf, "%s %s \"GET %s %d %d", ip, timestamp, url, &ret_code, &time_span);
                         if (items == ITEMS_PER_LOG_LINE && time_span >= 0) {
                             (*total_count) ++;
@@ -83,43 +94,46 @@ int load_log(const char* log_dir, uint64_t* total_count, uint64_t record_count[3
                             }
                             //[100000,infinite)
                             else{
-                                char tmp[1024 + 1] = {0};
-                                strncpy(tmp, line, MIN(len, 1024));
-                                printf("this record used over 100 seconds!!!\n%s", tmp);
+                                printf("this record used over 100 seconds!!!\n%s", line_buf);
                             }
                         }
                         else {
                             invalid_log_lines ++;
-                            char tmp[1024 + 1] = {0};
-                            strncpy(tmp, line, MIN(len, 1024));
-                            printf("invalid log line!\n%s", tmp);
+                            printf("invalid log line!\n%s", line_buf);
                         }
                     }
                 } while (line);
                 
                 fclose(fp);
+                fp = NULL;
             }
         }
     }
     closedir(dir);
+    dir = NULL;
     
     if (log_files == 0) {
-        return ERR_LL_NO_LOG_FILE;
+        return ERR_NO_LOG_FILE;
     }
     if (*total_count == 0) {
-        return ERR_LL_NO_LOG_RECORD;
+        return ERR_NO_LOG_RECORD;
     }
     if (invalid_log_lines != 0) {
         printf("%lld lines of logs are invalid!\n", invalid_log_lines);
     }
-    return ERR_LL_SUCCESS;
+    return ERR_SUCCESS;
 }
 
-void calc_percentage_time(uint64_t record_count[3][100], int64_t percent_counts[], int times[], uint num){
+void calc_time(uint64_t total_count, uint64_t record_count[3][100], float percents[], int times[], uint num){
     if (num == 0) {
         return;
     }
     memset(times, 0, sizeof(int) * num);
+    
+    int64_t* percent_counts = (int64_t*)malloc(sizeof(int64_t) * num);
+    for (int index = 0; index < num; index ++) {
+        percent_counts[index] = total_count * percents[index];
+    }
     
     int64_t count = 0;
     // Using complicated algo with 3 series of record_count per different time accurancy for storage saving
@@ -140,25 +154,46 @@ void calc_percentage_time(uint64_t record_count[3][100], int64_t percent_counts[
             }
         }
     }
+    free(percent_counts);
+    percent_counts = NULL;
 }
 
-void output_report(int times[3]){
-    if (times[0] != 0) {
-        printf("90%% of requests return a response in %d ms\n", times[0]);
+int calc_percentage_time(const char* log_dir, float percents[], int times[], uint num){
+    // check param
+    for (int index = 0; index < num; index ++) {
+        if (percents[index] < 0.0 || percents[index] >= 1.0) {
+            printf("invalid percents param!");
+            return ERR_INVALID_PARAM;
+        }
     }
-    else{
-        printf("over 10%% of requests return a response more than 100 secends!\n");
+    
+    uint64_t record_count[3][100] = {0};
+    uint64_t total_count = 0;
+    int ret = load_log(log_dir, &total_count, record_count);
+    if (ret != ERR_SUCCESS) {
+        printf("Load log failed!");
+        return ret;
     }
-    if (times[1] != 0) {
-        printf("95%% of requests return a response in %d ms\n", times[1]);
-    }
-    else{
-        printf("over 5%% of requests return a response more than 100 secends!\n");
-    }
-    if (times[2] != 0) {
-        printf("99%% of requests return a response in %d ms\n", times[2]);
-    }
-    else{
-        printf("over 1%% of requests return a response more than 100 secends!\n");
+    
+    calc_time(total_count, record_count, percents, times, num);
+    
+    return 0;
+}
+
+void output_report(float percents[], int times[], uint num){
+    for (int index = 0; index < num; index ++) {
+        if (percents[index] < 0.0 || percents[index] >= 1.0) {
+            printf("invalid percents param at index %d!", index);
+            return;
+        }
+        
+        if (times[index] != 0) {
+            printf("%d%% of requests return a response in %d ms\n",
+                   (int)(percents[index] * 100), times[index]);
+        }
+        else{
+            printf("over %d%% of requests return a response more than 100 secends!\n",
+                   (int)((1.0 - percents[index]) * 100));
+        }
     }
 }

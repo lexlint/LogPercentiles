@@ -12,21 +12,17 @@
 const char* LOG_DIR = "/var/log/httpd";
 
 int main(int argc, const char * argv[]) {
-    uint64_t record_count[3][100] = {0};
-    uint64_t total_count = 0;
+
+    float percents[3] = {0.90, 0.95, 0.99};
+    int times[3] = {0};
     
-    int ret = load_log(LOG_DIR, &total_count, record_count);
-    if (ret != ERR_LL_SUCCESS) {
-        printf("Load log failed!");
+    int ret = calc_percentage_time(LOG_DIR, percents, times, 3);
+    if (ret != 0) {
+        printf("calc_percentage_time failed! [%d]", ret);
         return ret;
     }
     
-    int64_t percent_counts[3] = {total_count * 0.9, total_count * 0.95, total_count * 0.99};
-    int times[3] = {0};
-    
-    calc_percentage_time(record_count, percent_counts, times, 3);
-    
-    output_report(times);
+    output_report(percents, times, 3);
     
     return 0;
 }
