@@ -34,7 +34,7 @@ enum ERR_CODE{
  *          For simplicity of calculation, not all elements in the array are used!
  *          [0][0-99]  * 10ms  [0-1s)
  *          [1][10-99] * 100ms [1-10s)      "[1][0-9] are not used"
- *          [2][10-99] * 1000ms[10-99s)     "[1][0-9] are not used"
+ *          [2][10-99] * 1000ms[10-99s)     "[2][0-9] are not used"
  * @return                  error code, see ERR_CODE.
  */
 int load_log(const char* log_dir, uint64_t* total_count, uint64_t record_count[3][100]);
